@@ -39,11 +39,11 @@ const registerEndpoint = () => {
   app.post("/register", async (req, res) => {
     try {
       const form = await signupSchema.validate(req.body);
-      const userExists = await addUser(form);
-      if (userExists) {
-        res.status(409).json({ message: "Username or email already exists" });
-      } else {
+      const registerSuccess = await addUser(form);
+      if (registerSuccess) {
         res.status(200).json({ message: "Registration successful" });
+      } else {
+        res.status(409).json({ message: "Username or email already exists" });
       }
     } catch (error) {
       res

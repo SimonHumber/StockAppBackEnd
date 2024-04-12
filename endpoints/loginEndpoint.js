@@ -13,16 +13,13 @@ passport.use(
     try {
       //attempt to find the user by their username
       const user = await User.findOne({ username });
-      if (!user) {
-        return done(null, false); //if user not found, return false
+      if (user) {
+        //if user is found, compare the provided password with the hashed password in database
+        if (await bcrypt.compare(password, user.password)) {
+          return done(null, user); //if password matches, authenticate user
+        }
       }
-
-      //if user is found, compare the provided password with the hashed password in database
-      if (await bcrypt.compare(password, user.password)) {
-        return done(null, user); //if password matches, authenticate user
-      } else {
-        return done(null, false); // if password doesn't match, return false
-      }
+      return done(null, false); // if password/username doesn't match, return false
     } catch (err) {
       done(err);
     }
@@ -37,7 +34,7 @@ const loginEndpoint = () =>
     "/login",
     passport.authenticate("local", { session: false }),
     (req, res) => {
-      const JWT_SECRET = "my-32-character-ultra-secure-and-ultra-long-secret";
+      const JWT_SECRET = process.env.SECRET;
       const token = jwt.sign({ id: req.body.username }, JWT_SECRET, {
         expiresIn: "1h",
       });

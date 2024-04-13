@@ -35,24 +35,20 @@ const signupSchema = Yup.object().shape({
     .required("Passwords must match"),
 });
 
-const registerEndpoint = () => {
-  app.post("/register", async (req, res) => {
-    try {
-      const form = await signupSchema.validate(req.body);
-      const registerSuccess = await addUser(form);
-      if (registerSuccess) {
-        res.status(200).json({ message: "Registration successful" });
-      } else {
-        res.status(409).json({ message: "Username or email already exists" });
-      }
-    } catch (error) {
-      res
-        .status(400)
-        .json({ message: "Error in registration, please try again" });
+app.post("/register", async (req, res) => {
+  try {
+    const form = await signupSchema.validate(req.body);
+    const registerSuccess = await addUser(form);
+    if (registerSuccess) {
+      res.status(200).json({ message: "Registration successful" });
+    } else {
+      res.status(409).json({ message: "Username or email already exists" });
     }
-  });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: "Error in registration, please try again" });
+  }
+});
 
-  return app;
-};
-
-module.exports = registerEndpoint;
+module.exports = app;

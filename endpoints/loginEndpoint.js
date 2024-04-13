@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const app = express();
 const User = require("../database/dbSchema");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 //initialize passport for user auth and integrating with express session
 app.use(passport.initialize());
@@ -29,17 +30,16 @@ passport.use(
 //this uses the passport local strategy for authentication
 // runs passport.use
 //if authentication is successful, the user will be logged in
-const loginEndpoint = () =>
-  app.post(
-    "/login",
-    passport.authenticate("local", { session: false }),
-    (req, res) => {
-      const JWT_SECRET = process.env.SECRET;
-      const token = jwt.sign({ id: req.body.username }, JWT_SECRET, {
-        expiresIn: "1h",
-      });
-      res.status(200).send(token);
-    },
-  );
+app.post(
+  "/login",
+  passport.authenticate("local", { session: false }),
+  (req, res) => {
+    const JWT_SECRET = process.env.SECRET;
+    const token = jwt.sign({ id: req.body.username }, JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    res.status(200).send(token);
+  },
+);
 
-module.exports = loginEndpoint;
+module.exports = app;

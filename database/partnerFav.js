@@ -1,12 +1,13 @@
 const User = require("./dbSchema");
 
-const partnerFav = async (partner) => {
+const partnerFav = async (username, partner) => {
   try {
-    const user = await User.findOne({ username: partner });
-    if (user) {
-      return user.watchlist;
-    }
-    return false;
+    const user = await User.findOne({ username });
+    const partnerIndex = user.partners.indexOf(partner);
+    const userFav = await User.findOne({
+      username: user.partners[partnerIndex],
+    });
+    return userFav.watchlist;
   } catch (err) {
     return err;
   }

@@ -6,9 +6,9 @@ const app = express();
 const authUser = require("../database/authUser");
 require("dotenv").config();
 
-app.use(passport.initialize());
-
 var opts = {};
+app.use(passport.initialize());
+app.use(express.json());
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.SECRET;
 
@@ -20,18 +20,28 @@ passport.use(
         //if user exists the user into the req
         done(null, user);
       } else {
+        console.log("hi");
         done(null, false);
       }
     } catch (err) {
+      console.log("hi");
       done(null, false);
     }
   }),
 );
 app.post(
-  "/favorite",
+  "/user",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    res.status(200).json(req.user.watchlist);
+    console.log("fetching favorites " + req.user);
+    res.status(200).json({
+      username: req.user.username,
+      firstName: req.user.firstName,
+      lastName: req.user.lastName,
+      email: req.user.email,
+      watchlist: req.user.watchlist,
+      partners: req.user.partners,
+    });
   },
 );
 

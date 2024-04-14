@@ -4,6 +4,7 @@ const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 const app = express();
 const authUser = require("../database/authUser");
+const addPartner = require("../database/addPartner");
 require("dotenv").config();
 
 app.use(passport.initialize());
@@ -28,10 +29,19 @@ passport.use(
   }),
 );
 app.post(
-  "/favorite",
+  "/addPartner",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    res.status(200).json(req.user.watchlist);
+    try {
+      const added = await addPartner(req.user.username, req.body.username);
+      if (!added) {
+        res.status(400).json({ message: "User not found!" });
+      } else {
+        res.status(200).json({ partners: req.user.partners });
+      }
+    } catch (err) {
+      res.status(500).json({ message: "Server error!" });
+    }
   },
 );
 

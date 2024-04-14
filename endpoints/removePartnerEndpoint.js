@@ -4,6 +4,7 @@ const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 const app = express();
 const authUser = require("../database/authUser");
+const removePartner = require("../database/removePartner");
 require("dotenv").config();
 
 app.use(passport.initialize());
@@ -28,10 +29,11 @@ passport.use(
   }),
 );
 app.post(
-  "/favorite",
+  "/removePartner",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    res.status(200).json(req.user.watchlist);
+    await removePartner(req.user.username, req.body.username);
+    res.status(200).json({ partners: req.user.partners });
   },
 );
 

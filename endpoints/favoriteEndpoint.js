@@ -3,10 +3,8 @@ const passport = require("passport");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 const app = express();
-const User = require("../database/dbSchema");
 const authUser = require("../database/authUser");
 require("dotenv").config();
-const jwt = require("jsonwebtoken");
 
 app.use(passport.initialize());
 
@@ -33,6 +31,7 @@ app.post(
   "/favorite",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
+    // console.log("fetching favorites " + req.user.watchlist);
     res.status(200).json(req.user.watchlist);
   },
 );

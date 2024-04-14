@@ -32,8 +32,8 @@ app.post(
   "/toggleFav",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    toggleFav(req.user.username, req.body.symbol);
-    res.status(200).json(req.user.watchlist.includes(req.body.symbol));
+    await toggleFav(req.user.username, req.body.symbol);
+    res.status(200).json({ message: "Toggled" });
   },
 );
 
